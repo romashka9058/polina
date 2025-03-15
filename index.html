@@ -55,7 +55,7 @@ h2 {
   color: #EDEDED;
 }
 
-a {
+.custom-audio, a {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,6 +67,43 @@ a {
   margin: auto;
   color: #fff;
 }
+
+.custom-audio button {
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 100%;
+            transition: 0.3s;
+        }
+
+        .custom-audio button:hover {
+            background: white;
+            color: black;
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            height: 5px;
+            background: #aa00ff; 
+            margin: 0 10px;
+            border-radius: 5px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0;
+            background: white;
+            border-radius: 5px;
+            transition: width 0.2s;
+        }
+        
+        #playpause {
+            background: linear-gradient(#ff66cc, #aa00ff);
+        }
     
 p {
   font-family: 'Copperplate', Arial, sans-serif;
@@ -154,7 +191,21 @@ p {
   </div>
 
   <div class="separator"></div> <!-- Разделительная линия -->
-
+  
+  <div class="container">
+        <h2>Ангельский голосок Полины</h2>
+        <p>Ну тут да,я ничего писать  не буду</p>
+        <div class="custom-audio">
+            <button id="playPause" onclick="togglePlay()">▶</button>
+            <div class="progress-container" onclick="setAudioProgress(event)">
+                <div id="progress-bar"></div>
+            </div>
+            <span id="currentTime">0:00</span>
+        </div>
+    </div> 
+    
+    <div class="separator"></div>
+  
   <div class="container">
     <h2>Любимые группы:</h2>
     <h1>💥Stray  Kids🔥</h1>
@@ -190,7 +241,34 @@ p {
     <h2>У полины есть <q>БЕСТ ФРЕНДС</q> Аня</h2>
     <p><a href="https://romashka9058.github.io/anya/">Ссылочка на ее сатйик</a></p>
   </div>
-
-
 </body>
 </html>
+<script>
+    let audio1 = new Audio('1.opus');
+    let isPlaying1 = false;
+
+    function togglePlay() {
+        if (isPlaying1) {
+            audio1.pause();
+            document.getElementById("playPause").textContent = "▶";
+            audio2.volume = 1;
+        } else {
+            audio1.play().catch(error => console.log(error));
+            document.getElementById("playPause").textContent = "︎︎︎︎   ||︎ ︎ ";
+            audio2.volume = 0.1;
+        }
+        isPlaying1 = !isPlaying1;
+    }
+
+    audio1.addEventListener('ended', () => {
+        isPlaying1 = false;
+        document.getElementById("playPause").textContent = "▶";
+        audio2.volume = 1;
+    });
+
+    audio1.addEventListener('timeupdate', () => {
+        let progress = (audio1.currentTime / audio1.duration) * 100;
+        document.getElementById("progress-bar").style.width = progress + "%";
+        document.getElementById("currentTime").textContent = formatTime(audio1.currentTime);
+    });
+</script>
