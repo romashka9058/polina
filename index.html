@@ -194,7 +194,7 @@ p {
   
   <div class="container">
         <h2>Ангельский голосок Полины</h2>
-        <p>Она в музыкалке на 5 учится</p>
+        <p>Она в музыкалке на пятёрки учится</p>
         <div class="custom-audio">
             <button id="playPause" onclick="togglePlay()">▶</button>
             <div class="progress-container" onclick="setAudioProgress(event)">
@@ -245,30 +245,48 @@ p {
 </html>
 <script>
     let audio1 = new Audio('1.opus');
-    let isPlaying1 = false;
 
-    function togglePlay() {
-        if (isPlaying1) {
-            audio1.pause();
-            document.getElementById("playPause").textContent = "▶";
-            audio2.volume = 1;
-        } else {
-            audio1.play().catch(error => console.log(error));
-            document.getElementById("playPause").textContent = "︎︎︎︎   ||︎ ︎ ";
-            audio2.volume = 0.1;
-        }
-        isPlaying1 = !isPlaying1;
-    }
+  function startMusic() {
+      document.getElementById("musicOverlay").style.display = 'none';
+      audio2.play().catch(error => console.log(error));
+  }
 
-    audio1.addEventListener('ended', () => {
-        isPlaying1 = false;
-        document.getElementById("playPause").textContent = "▶";
-        audio2.volume = 1;
-    });
+  let isPlaying1 = false; // Переменная для отслеживания состояния плеера 1.opus
 
-    audio1.addEventListener('timeupdate', () => {
-        let progress = (audio1.currentTime / audio1.duration) * 100;
-        document.getElementById("progress-bar").style.width = progress + "%";
-        document.getElementById("currentTime").textContent = formatTime(audio1.currentTime);
-    });
+  function togglePlay() {
+      if (isPlaying1) {
+          audio1.pause();
+          document.getElementById("playPause").textContent = "▶";
+      } else {
+          audio1.play().catch(error => console.log(error));
+          document.getElementById("playPause").textContent = "||";
+      }
+      isPlaying1 = !isPlaying1;
+  }
+
+  // Останавливаем плеер 1.opus, когда он заканчивается
+  audio1.addEventListener('ended', () => {
+      isPlaying1 = false;
+      document.getElementById("playPause").textContent = "▶";
+  });
+
+  // Обновляем прогресс бара
+  audio1.addEventListener('timeupdate', () => {
+      let progress = (audio1.currentTime / audio1.duration) * 100;
+      document.getElementById("progress-bar").style.width = progress + "%";
+      document.getElementById("currentTime").textContent = formatTime(audio1.currentTime);
+  });
+
+  function setAudioProgress(event) {
+      let progressContainer = document.querySelector(".progress-container");
+      let width = progressContainer.clientWidth;
+      let clickX = event.offsetX;
+      audio1.currentTime = (clickX / width) * audio1.duration;
+  }
+
+  function formatTime(seconds) {
+      let min = Math.floor(seconds / 60);
+      let sec = Math.floor(seconds % 60);
+      return ${min}:${sec < 10 ? '0' + sec : sec};
+  }
 </script>
