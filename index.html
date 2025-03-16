@@ -261,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function togglePlay() {
     if (!isPlaying) {
       audio.play().then(() => {
-        playPauseBtn.textContent = "︎ || ︎";
+        playPauseBtn.textContent = " ||";
         isPlaying = true;
       }).catch((error) => console.log("Ошибка воспроизведения:", error));
     } else {
@@ -297,10 +297,21 @@ document.addEventListener("DOMContentLoaded", () => {
     isPlaying = false;
   });
 
-  playPauseBtn.addEventListener("click", togglePlay);
+  playPauseBtn.addEventListener("click", () => {
+    if (audio.readyState >= 2) { // Проверяем, загружен ли файл
+      togglePlay();
+    } else {
+      audio.load(); // Принудительно загружаем файл
+      audio.play().then(() => {
+        playPauseBtn.textContent = " ||︎";
+        isPlaying = true;
+      }).catch((error) => console.log("Ошибка воспроизведения:", error));
+    }
+  });
+
   progressContainer.addEventListener("click", setAudioProgress);
 
-  // Исправление для iPhone: включаем аудио при первом касании экрана
+  // Исправление для iPhone: разрешаем звук при первом касании экрана
   document.body.addEventListener("click", () => {
     if (!isPlaying) {
       audio.play().catch(() => {});
