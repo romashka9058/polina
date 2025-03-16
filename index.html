@@ -230,7 +230,7 @@
   </div>
 
   <script>
-    const audio1 = new Audio('1.opus');
+    const audio1 = new Audio('1.mp3');
     let isPlaying1 = false;
 
     function togglePlay() {
@@ -239,7 +239,7 @@
         document.getElementById("playPause").textContent = "▶";
       } else {
         audio1.play().catch(console.log);
-        document.getElementById("playPause").textContent = "||";
+        document.getElementById("playPause").textContent = "︎︎︎ ||︎ ︎ ︎";
       }
       isPlaying1 = !isPlaying1;
     }
