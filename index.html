@@ -190,7 +190,7 @@
   </style>
 </head>
 <body>
-
+  <audio id="audio" src="./music/1.mp3" preload="metadata" playsinline></audio>
   <div class="container">
     <h3>Полина главная K-pop фанатка</h3>
     <p>Полина Назарова - известная как просто 'поляна', 'польша', для своих просто 'атомная бомба'.</p>
@@ -201,13 +201,13 @@
   <div class="container">
     <h2>Ангельский голосок Полины</h2>
     <p>Она в музыкалке на пятёрки учится</p>
-    <div class="custom-audio">
-      <button id="playPause" onclick="togglePlay()">▶</button>
-      <div class="progress-container" onclick="setAudioProgress(event)">
-        <div id="progress-bar"></div>
-      </div>
-      <span id="currentTime">0:00</span>
+      <div class="custom-audio">
+    <button id="playPause">▶</button>
+    <div class="progress-container" onclick="setAudioProgress(event)">
+      <div id="progress-bar"></div>
     </div>
+    <span id="currentTime">0:00</span>
+  </div>
   </div> 
   
   <div class="separator"></div>
@@ -250,75 +250,76 @@
 
   <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const audio = new Audio("music/1.mp3");
-  let isPlaying = false;
+      const audio = document.getElementById("audio");
+      let isPlaying = false;
 
-  const playPauseBtn = document.querySelector("#playPause");
-  const progressBar = document.querySelector("#progress-bar");
-  const currentTimeEl = document.querySelector("#currentTime");
-  const progressContainer = document.querySelector(".progress-container");
+      const playPauseBtn = document.querySelector("#playPause");
+      const progressBar = document.querySelector("#progress-bar");
+      const currentTimeEl = document.querySelector("#currentTime");
+      const progressContainer = document.querySelector(".progress-container");
 
-  function togglePlay() {
-    if (!isPlaying) {
-      audio.play().then(() => {
-        playPauseBtn.textContent = " ||";
-        isPlaying = true;
-      }).catch((error) => console.log("Ошибка воспроизведения:", error));
-    } else {
-      audio.pause();
-      playPauseBtn.textContent = "▶";
-      isPlaying = false;
-    }
-  }
+      function togglePlay() {
+        if (!isPlaying) {
+          audio.load(); // Принудительная загрузка
+          audio.play().then(() => {
+            playPauseBtn.textContent = " ||";
+            isPlaying = true;
+          }).catch((error) => console.log("Ошибка воспроизведения:", error));
+        } else {
+          audio.pause();
+          playPauseBtn.textContent = "▶";
+          isPlaying = false;
+        }
+      }
 
-  function updateProgress() {
-    if (!audio.duration) return;
-    const progress = (audio.currentTime / audio.duration) * 100;
-    progressBar.style.width = `${progress}%`;
-    currentTimeEl.textContent = formatTime(audio.currentTime);
-  }
+      function updateProgress() {
+        if (!audio.duration) return;
+        const progress = (audio.currentTime / audio.duration) * 100;
+        progressBar.style.width = `${progress}%`;
+        currentTimeEl.textContent = formatTime(audio.currentTime);
+      }
 
-  function setAudioProgress(event) {
-    if (!audio.duration) return;
-    const clickX = event.offsetX;
-    const width = progressContainer.clientWidth;
-    audio.currentTime = (clickX / width) * audio.duration;
-  }
+      function setAudioProgress(event) {
+        if (!audio.duration) return;
+        const clickX = event.offsetX;
+        const width = progressContainer.clientWidth;
+        audio.currentTime = (clickX / width) * audio.duration;
+      }
 
-  function formatTime(seconds) {
-    const min = Math.floor(seconds / 60);
-    const sec = Math.floor(seconds % 60).toString().padStart(2, "0");
-    return `${min}:${sec}`;
-  }
+      function formatTime(seconds) {
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60).toString().padStart(2, "0");
+        return `${min}:${sec}`;
+      }
 
-  audio.addEventListener("timeupdate", updateProgress);
-  audio.addEventListener("ended", () => {
-    playPauseBtn.textContent = "▶";
-    isPlaying = false;
-  });
+      audio.addEventListener("timeupdate", updateProgress);
+      audio.addEventListener("ended", () => {
+        playPauseBtn.textContent = "▶";
+        isPlaying = false;
+      });
 
-  playPauseBtn.addEventListener("click", () => {
-    if (audio.readyState >= 2) { // Проверяем, загружен ли файл
-      togglePlay();
-    } else {
-      audio.load(); // Принудительно загружаем файл
-      audio.play().then(() => {
-        playPauseBtn.textContent = " ||︎";
-        isPlaying = true;
-      }).catch((error) => console.log("Ошибка воспроизведения:", error));
-    }
-  });
+      playPauseBtn.addEventListener("click", () => {
+        if (audio.readyState >= 2) {
+          togglePlay();
+        } else {
+          audio.load();
+          audio.play().then(() => {
+            playPauseBtn.textContent = " ||";
+            isPlaying = true;
+          }).catch((error) => console.log("Ошибка воспроизведения:", error));
+        }
+      });
 
-  progressContainer.addEventListener("click", setAudioProgress);
+      progressContainer.addEventListener("click", setAudioProgress);
 
-  // Исправление для iPhone: разрешаем звук при первом касании экрана
-  document.body.addEventListener("click", () => {
-    if (!isPlaying) {
-      audio.play().catch(() => {});
-      isPlaying = true;
-    }
-  }, { once: true });
-});
+      // Исправление для iPhone: разрешаем звук при первом касании
+      document.body.addEventListener("click", () => {
+        if (!isPlaying) {
+          audio.play().catch(() => {});
+          isPlaying = true;
+        }
+      }, { once: true });
+    });
   </script>
 </body>
 </html>
